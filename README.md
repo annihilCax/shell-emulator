@@ -21,7 +21,7 @@ mkdir – создание каталога или подкаталога
 
 Сборка проекта осуществляется в командной строке с ключами --username, --tar, --log для имени пользователя, пути к архиву виртуальной файловой системы и пути к лог-файлу соответственно.
 ```
-python main.py --username user --tar vfs.tar --log log.json
+python main.py --username user --tar src/vfs.tar --log src/log.json
 ```
 
 ## 4. Примеры использования

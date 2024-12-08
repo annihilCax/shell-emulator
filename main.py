@@ -28,43 +28,62 @@ class ShellEmulator:
         if not os.path.exists(log_path):
             raise FileNotFoundError(f"{log_path}: no such file or directory.")
 
-        #
-        # команды
-        def ls(self):
-            current = self.file_structure
-            for part in self.current_path.strip('/').split('/'):
-                if part:
-                    current = current.get(part, {})
-            print(' '.join(current.keys()))
+    #
+    # лог-файл
+    def initialize_log(self):
+        with open(self.log_path, 'w') as log_file:
+            json.dump([], log_file)
 
-        def cd(self, path):
-            new_path = self._resolve_path(path)
-            current = self.file_structure
-            for part in new_path.strip('/').split('/'):
-                if part:
-                    current = current.get(part)
-                    if current is None:
-                        print(f"{path}: no such file or directory.")
-                        return
-            self.current_path = new_path
+    def edit_log(self, command):
+        timestamp = datetime.datetime.now().isoformat()
+        entry = {
+            "timestamp": timestamp,
+            "user": self.username,
+            "command": command
+        }
+        with open(self.log_path, 'r+') as log_file:
+            log_data = json.load(log_file)
+            log_data.append(entry)
+            log_file.seek(0)
+            json.dump(log_data, log_file, indent=4)
 
-        def mkdir(self, name):
-            current = self.file_structure
-            for part in self.current_path.strip('/').split('/'):
-                if part:
-                    current = current.get(part, {})
-            if name in current:
-                print(f"Cannot create directory '{name}': File exists")
-            else:
-                current[name] = {}
+    #
+    # команды
+    def ls(self):
+        current = self.file_structure
+        for part in self.current_path.strip('/').split('/'): #удалить конечный и начальный слэши + разделение
+            if part:
+                current = current.get(part, {})
+        print(' '.join(current.keys()))
 
-        def history(self):
-            for index, command in enumerate(self.command_history, 1):
-                print(f"{index} {command}")
+    def cd(self, path):
+        new_path = self.resolve_path(path)
+        current = self.file_structure
+        for part in new_path.strip('/').split('/'):
+            if part:
+                current = current.get(part)
+                if current is None:
+                    print(f"{path}: no such file or directory.")
+                    return
+        self.current_path = new_path
 
-        def exit(self):
-            print("Exiting...")
-            exit()
+    def mkdir(self, name):
+        current = self.file_structure
+        for part in self.current_path.strip('/').split('/'):
+            if part:
+                current = current.get(part, {})
+        if name in current:
+            print(f"Cannot create directory '{name}': File exists")
+        else:
+            current[name] = {}
+
+    def history(self):
+        for index, command in enumerate(self.command_history, 1):
+            print(f"{index} {command}")
+
+    def exit(self):
+        print("Exiting...")
+        exit()
 
 
 if __name__ == "__main__":
