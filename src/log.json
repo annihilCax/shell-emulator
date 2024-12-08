@@ -1,0 +1,22 @@
+[
+    {
+        "timestamp": "2024-12-09T02:54:11.988060",
+        "user": "user",
+        "command": "mkdir dir"
+    },
+    {
+        "timestamp": "2024-12-09T02:54:14.141570",
+        "user": "user",
+        "command": "ls"
+    },
+    {
+        "timestamp": "2024-12-09T02:54:21.105329",
+        "user": "user",
+        "command": "history"
+    },
+    {
+        "timestamp": "2024-12-09T02:54:57.338324",
+        "user": "user",
+        "command": "exit"
+    }
+]

@@ -34,7 +34,7 @@ class ShellEmulator:
     #
     # тар-архив
     def load_tar_file(self):
-        with tarfile.open(self.tar_path, 'r') as tar:
+        with tarfile.open(self.tar_path, 'r:*') as tar:
             for member in tar.getmembers():
                 parts = member.name.split('/')
                 current = self.file_structure
@@ -69,7 +69,7 @@ class ShellEmulator:
         else:
             resolved_path = os.path.join(self.current_path, path)
         parts = [part for part in resolved_path.split('/')
-                 if part & part != '.']
+                 if part and part != '.']
         stack = []
         for part in parts:
             if part == '..':
@@ -121,7 +121,7 @@ class ShellEmulator:
     # запуск
     def run(self):
         while True:
-            command = input(f"{self.username}@shell:{self.current_path}$ ").strip()
+            command = input(f"{self.username}@shell:~{self.current_path}$ ").strip()
             self.command_history.append(command)
             self.edit_log(command)
 
