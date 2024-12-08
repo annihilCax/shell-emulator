@@ -28,6 +28,20 @@ class ShellEmulator:
         if not os.path.exists(log_path):
             raise FileNotFoundError(f"{log_path}: no such file or directory.")
 
+        self.load_tar_file()
+        self.initialize_log()
+
+    #
+    # тар-архив
+    def load_tar_file(self):
+        with tarfile.open(self.tar_path, 'r') as tar:
+            for member in tar.getmembers():
+                parts = member.name.split('/')
+                current = self.file_structure
+                for part in parts:
+                    if part:
+                        current = current.setdefault(part, {})
+
     #
     # лог-файл
     def initialize_log(self):
@@ -48,16 +62,34 @@ class ShellEmulator:
             json.dump(log_data, log_file, indent=4)
 
     #
+    # путь
+    def relative_to_absolute_path(self, path):
+        if path.startswith('/'):
+            resolved_path = path
+        else:
+            resolved_path = os.path.join(self.current_path, path)
+        parts = [part for part in resolved_path.split('/')
+                 if part & part != '.']
+        stack = []
+        for part in parts:
+            if part == '..':
+                if stack:
+                    stack.pop()
+            else:
+                stack.append(part)
+        return '/' + '/'.join(stack)
+
+    #
     # команды
     def ls(self):
         current = self.file_structure
-        for part in self.current_path.strip('/').split('/'): #удалить конечный и начальный слэши + разделение
+        for part in self.current_path.strip('/').split('/'):  # удалить конечный и начальный слэши + разделение
             if part:
                 current = current.get(part, {})
         print(' '.join(current.keys()))
 
     def cd(self, path):
-        new_path = self.resolve_path(path)
+        new_path = self.relative_to_absolute_path(path)
         current = self.file_structure
         for part in new_path.strip('/').split('/'):
             if part:
@@ -85,6 +117,34 @@ class ShellEmulator:
         print("Exiting...")
         exit()
 
+    #
+    # запуск
+    def run(self):
+        while True:
+            command = input(f"{self.username}@shell:{self.current_path}$ ").strip()
+            self.command_history.append(command)
+            self.edit_log(command)
+
+            if command.startswith('ls'):
+                self.ls()
+            elif command.startswith('cd '):
+                _, path = command.split(' ', 1)
+                self.cd(path)
+            elif command.startswith('mkdir '):
+                _, name = command.split(' ', 1)
+                self.mkdir(name)
+            elif command == 'history':
+                self.history()
+            elif command == 'exit':
+                self.exit()
+            else:
+                print(f"{command}: command not found")
 
 if __name__ == "__main__":
     args = parse_args()
+
+    try:
+        shell = ShellEmulator(args.username, args.tar, args.log)
+        shell.run()
+    except Exception as err:
+        print(f"Error: {err}")
