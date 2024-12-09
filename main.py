@@ -49,7 +49,7 @@ class ShellEmulator:
             json.dump([], log_file)
 
     def edit_log(self, command):
-        timestamp = datetime.datetime.now().isoformat()
+        timestamp = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
         entry = {
             "timestamp": timestamp,
             "user": self.username,
@@ -105,7 +105,7 @@ class ShellEmulator:
             if part:
                 current = current.get(part, {})
         if name in current:
-            print(f"Cannot create directory '{name}': File exists")
+            print(f"Cannot create directory '{name}': Directory exists")
         else:
             current[name] = {}
 

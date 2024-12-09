@@ -1,21 +1,16 @@
 [
     {
-        "timestamp": "2024-12-09T02:54:11.988060",
-        "user": "user",
-        "command": "mkdir dir"
-    },
-    {
-        "timestamp": "2024-12-09T02:54:14.141570",
+        "timestamp": "2024-12-09 03:36:02",
         "user": "user",
         "command": "ls"
     },
     {
-        "timestamp": "2024-12-09T02:54:21.105329",
+        "timestamp": "2024-12-09 03:36:06",
         "user": "user",
-        "command": "history"
+        "command": "cd vfs"
     },
     {
-        "timestamp": "2024-12-09T02:54:57.338324",
+        "timestamp": "2024-12-09 03:38:03",
         "user": "user",
         "command": "exit"
     }
