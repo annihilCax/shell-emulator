@@ -27,4 +27,3 @@ python main.py --username user --tar src/vfs.tar --log src/log.json
 ## 4. Примеры использования
 ![alt text](image.png)
 ![alt text](image-1.png)
-## 5. Результаты прогона тестов
